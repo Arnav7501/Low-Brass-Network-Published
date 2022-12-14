@@ -1,0 +1,14 @@
+{
+  "resourceName": "s3socialmediaappstorage81356901",
+  "bucketName": "socialmediaapp-storage-81356901",
+  "policyUUID": "e91d3102",
+  "storageAccess": "authAndGuest",
+  "guestAccess": [
+    "READ"
+  ],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ]
+}

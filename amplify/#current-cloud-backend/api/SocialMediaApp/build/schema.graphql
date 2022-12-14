@@ -1,0 +1,430 @@
+
+type Post2 @aws_iam @aws_api_key {
+  id: ID!
+  description: String
+  image: String
+  number_of_likes: Int
+  number_of_shares: Int
+  name: String
+  reports: Int
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  _version: Int!
+  _deleted: Boolean
+  _lastChangedAt: AWSTimestamp!
+}
+
+type Post @aws_iam @aws_api_key {
+  id: ID!
+  description: String
+  image: String
+  number_of_likes: Int
+  number_of_shares: Int
+  User: User
+  reports: Int
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  _version: Int!
+  _deleted: Boolean
+  _lastChangedAt: AWSTimestamp!
+  postUserId: ID
+}
+
+type User @aws_iam @aws_api_key {
+  id: ID!
+  name: String!
+  image: String
+  reports: Int
+  blocks: [String]
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  _version: Int!
+  _deleted: Boolean
+  _lastChangedAt: AWSTimestamp!
+}
+
+input ModelStringInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+input ModelIntInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelFloatInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  between: [Float]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelBooleanInput {
+  ne: Boolean
+  eq: Boolean
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelIDInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+input ModelSubscriptionStringInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+  in: [String]
+  notIn: [String]
+}
+
+input ModelSubscriptionIntInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+  in: [Int]
+  notIn: [Int]
+}
+
+input ModelSubscriptionFloatInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  between: [Float]
+  in: [Float]
+  notIn: [Float]
+}
+
+input ModelSubscriptionBooleanInput {
+  ne: Boolean
+  eq: Boolean
+}
+
+input ModelSubscriptionIDInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+  in: [ID]
+  notIn: [ID]
+}
+
+enum ModelAttributeTypes {
+  binary
+  binarySet
+  bool
+  list
+  map
+  number
+  numberSet
+  string
+  stringSet
+  _null
+}
+
+input ModelSizeInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+}
+
+enum ModelSortDirection {
+  ASC
+  DESC
+}
+
+type ModelPost2Connection @aws_api_key @aws_iam {
+  items: [Post2]!
+  nextToken: String
+  startedAt: AWSTimestamp
+}
+
+input ModelPost2FilterInput {
+  id: ModelIDInput
+  description: ModelStringInput
+  image: ModelStringInput
+  number_of_likes: ModelIntInput
+  number_of_shares: ModelIntInput
+  name: ModelStringInput
+  reports: ModelIntInput
+  and: [ModelPost2FilterInput]
+  or: [ModelPost2FilterInput]
+  not: ModelPost2FilterInput
+}
+
+type Query {
+  getPost2(id: ID!): Post2 @aws_api_key @aws_iam
+  listPost2s(filter: ModelPost2FilterInput, limit: Int, nextToken: String): ModelPost2Connection @aws_api_key @aws_iam
+  syncPost2s(filter: ModelPost2FilterInput, limit: Int, nextToken: String, lastSync: AWSTimestamp): ModelPost2Connection @aws_api_key @aws_iam
+  getPost(id: ID!): Post @aws_api_key @aws_iam
+  listPosts(filter: ModelPostFilterInput, limit: Int, nextToken: String): ModelPostConnection @aws_api_key @aws_iam
+  syncPosts(filter: ModelPostFilterInput, limit: Int, nextToken: String, lastSync: AWSTimestamp): ModelPostConnection @aws_api_key @aws_iam
+  getUser(id: ID!): User @aws_api_key @aws_iam
+  listUsers(filter: ModelUserFilterInput, limit: Int, nextToken: String): ModelUserConnection @aws_api_key @aws_iam
+  syncUsers(filter: ModelUserFilterInput, limit: Int, nextToken: String, lastSync: AWSTimestamp): ModelUserConnection @aws_api_key @aws_iam
+}
+
+input ModelPost2ConditionInput {
+  description: ModelStringInput
+  image: ModelStringInput
+  number_of_likes: ModelIntInput
+  number_of_shares: ModelIntInput
+  name: ModelStringInput
+  reports: ModelIntInput
+  and: [ModelPost2ConditionInput]
+  or: [ModelPost2ConditionInput]
+  not: ModelPost2ConditionInput
+}
+
+input CreatePost2Input {
+  id: ID
+  description: String
+  image: String
+  number_of_likes: Int
+  number_of_shares: Int
+  name: String
+  reports: Int
+  _version: Int
+}
+
+input UpdatePost2Input {
+  id: ID!
+  description: String
+  image: String
+  number_of_likes: Int
+  number_of_shares: Int
+  name: String
+  reports: Int
+  _version: Int
+}
+
+input DeletePost2Input {
+  id: ID!
+  _version: Int
+}
+
+type Mutation {
+  createPost2(input: CreatePost2Input!, condition: ModelPost2ConditionInput): Post2 @aws_api_key @aws_iam
+  updatePost2(input: UpdatePost2Input!, condition: ModelPost2ConditionInput): Post2 @aws_api_key @aws_iam
+  deletePost2(input: DeletePost2Input!, condition: ModelPost2ConditionInput): Post2 @aws_api_key @aws_iam
+  createPost(input: CreatePostInput!, condition: ModelPostConditionInput): Post @aws_api_key @aws_iam
+  updatePost(input: UpdatePostInput!, condition: ModelPostConditionInput): Post @aws_api_key @aws_iam
+  deletePost(input: DeletePostInput!, condition: ModelPostConditionInput): Post @aws_api_key @aws_iam
+  createUser(input: CreateUserInput!, condition: ModelUserConditionInput): User @aws_api_key @aws_iam
+  updateUser(input: UpdateUserInput!, condition: ModelUserConditionInput): User @aws_api_key @aws_iam
+  deleteUser(input: DeleteUserInput!, condition: ModelUserConditionInput): User @aws_api_key @aws_iam
+}
+
+input ModelSubscriptionPost2FilterInput {
+  id: ModelSubscriptionIDInput
+  description: ModelSubscriptionStringInput
+  image: ModelSubscriptionStringInput
+  number_of_likes: ModelSubscriptionIntInput
+  number_of_shares: ModelSubscriptionIntInput
+  name: ModelSubscriptionStringInput
+  reports: ModelSubscriptionIntInput
+  and: [ModelSubscriptionPost2FilterInput]
+  or: [ModelSubscriptionPost2FilterInput]
+}
+
+type Subscription {
+  onCreatePost2(filter: ModelSubscriptionPost2FilterInput): Post2 @aws_subscribe(mutations: ["createPost2"]) @aws_api_key @aws_iam
+  onUpdatePost2(filter: ModelSubscriptionPost2FilterInput): Post2 @aws_subscribe(mutations: ["updatePost2"]) @aws_api_key @aws_iam
+  onDeletePost2(filter: ModelSubscriptionPost2FilterInput): Post2 @aws_subscribe(mutations: ["deletePost2"]) @aws_api_key @aws_iam
+  onCreatePost(filter: ModelSubscriptionPostFilterInput): Post @aws_subscribe(mutations: ["createPost"]) @aws_api_key @aws_iam
+  onUpdatePost(filter: ModelSubscriptionPostFilterInput): Post @aws_subscribe(mutations: ["updatePost"]) @aws_api_key @aws_iam
+  onDeletePost(filter: ModelSubscriptionPostFilterInput): Post @aws_subscribe(mutations: ["deletePost"]) @aws_api_key @aws_iam
+  onCreateUser(filter: ModelSubscriptionUserFilterInput): User @aws_subscribe(mutations: ["createUser"]) @aws_api_key @aws_iam
+  onUpdateUser(filter: ModelSubscriptionUserFilterInput): User @aws_subscribe(mutations: ["updateUser"]) @aws_api_key @aws_iam
+  onDeleteUser(filter: ModelSubscriptionUserFilterInput): User @aws_subscribe(mutations: ["deleteUser"]) @aws_api_key @aws_iam
+}
+
+type ModelPostConnection @aws_api_key @aws_iam {
+  items: [Post]!
+  nextToken: String
+  startedAt: AWSTimestamp
+}
+
+input ModelPostFilterInput {
+  id: ModelIDInput
+  description: ModelStringInput
+  image: ModelStringInput
+  number_of_likes: ModelIntInput
+  number_of_shares: ModelIntInput
+  reports: ModelIntInput
+  and: [ModelPostFilterInput]
+  or: [ModelPostFilterInput]
+  not: ModelPostFilterInput
+  postUserId: ModelIDInput
+}
+
+input ModelPostConditionInput {
+  description: ModelStringInput
+  image: ModelStringInput
+  number_of_likes: ModelIntInput
+  number_of_shares: ModelIntInput
+  reports: ModelIntInput
+  and: [ModelPostConditionInput]
+  or: [ModelPostConditionInput]
+  not: ModelPostConditionInput
+  postUserId: ModelIDInput
+}
+
+input CreatePostInput {
+  id: ID
+  description: String
+  image: String
+  number_of_likes: Int
+  number_of_shares: Int
+  reports: Int
+  _version: Int
+  postUserId: ID
+}
+
+input UpdatePostInput {
+  id: ID!
+  description: String
+  image: String
+  number_of_likes: Int
+  number_of_shares: Int
+  reports: Int
+  _version: Int
+  postUserId: ID
+}
+
+input DeletePostInput {
+  id: ID!
+  _version: Int
+}
+
+input ModelSubscriptionPostFilterInput {
+  id: ModelSubscriptionIDInput
+  description: ModelSubscriptionStringInput
+  image: ModelSubscriptionStringInput
+  number_of_likes: ModelSubscriptionIntInput
+  number_of_shares: ModelSubscriptionIntInput
+  reports: ModelSubscriptionIntInput
+  and: [ModelSubscriptionPostFilterInput]
+  or: [ModelSubscriptionPostFilterInput]
+}
+
+type ModelUserConnection @aws_api_key @aws_iam {
+  items: [User]!
+  nextToken: String
+  startedAt: AWSTimestamp
+}
+
+input ModelUserFilterInput {
+  id: ModelIDInput
+  name: ModelStringInput
+  image: ModelStringInput
+  reports: ModelIntInput
+  blocks: ModelStringInput
+  and: [ModelUserFilterInput]
+  or: [ModelUserFilterInput]
+  not: ModelUserFilterInput
+}
+
+input ModelUserConditionInput {
+  name: ModelStringInput
+  image: ModelStringInput
+  reports: ModelIntInput
+  blocks: ModelStringInput
+  and: [ModelUserConditionInput]
+  or: [ModelUserConditionInput]
+  not: ModelUserConditionInput
+}
+
+input CreateUserInput {
+  id: ID
+  name: String!
+  image: String
+  reports: Int
+  blocks: [String]
+  _version: Int
+}
+
+input UpdateUserInput {
+  id: ID!
+  name: String
+  image: String
+  reports: Int
+  blocks: [String]
+  _version: Int
+}
+
+input DeleteUserInput {
+  id: ID!
+  _version: Int
+}
+
+input ModelSubscriptionUserFilterInput {
+  id: ModelSubscriptionIDInput
+  name: ModelSubscriptionStringInput
+  image: ModelSubscriptionStringInput
+  reports: ModelSubscriptionIntInput
+  blocks: ModelSubscriptionStringInput
+  and: [ModelSubscriptionUserFilterInput]
+  or: [ModelSubscriptionUserFilterInput]
+}
+

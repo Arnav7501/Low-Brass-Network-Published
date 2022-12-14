@@ -1,0 +1,7 @@
+{
+    "AppSyncApiName": "SocialMediaApp",
+    "DynamoDBBillingMode": "PAY_PER_REQUEST",
+    "DynamoDBEnableServerSideEncryption": false,
+    "S3DeploymentBucket": "amplify-socialmediaapp-staging-11043-deployment",
+    "S3DeploymentRootKey": "amplify-appsync-files/3922505c35df32ac484e75c9b1888f3e6757a1f2"
+}

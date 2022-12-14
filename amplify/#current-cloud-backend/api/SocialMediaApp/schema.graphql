@@ -1,0 +1,28 @@
+type Post2 @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  description: String
+  image: String
+  number_of_likes: Int
+  number_of_shares: Int
+  name: String
+  reports: Int
+}
+
+type Post @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  description: String
+  image: String
+  number_of_likes: Int
+  number_of_shares: Int
+  User: User @hasOne
+  reports: Int
+}
+
+type User @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String!
+  image: String
+  reports: Int
+  blocks: [String]
+}
+ 

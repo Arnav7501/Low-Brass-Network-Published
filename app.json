@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "lbnapp_new",
+    "name": "Low Brass Network",
     "slug": "lbnapp_new",
-    "version": "1.0.0",
+    "version": "7.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/lbnicon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/lbnicon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -18,16 +18,23 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "lbnapp"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/lbnicon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.arnav_123.lbnapp_new"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "56670e1e-3c0a-4866-8a72-044e27f40d97"
+      }
     }
   }
 }
