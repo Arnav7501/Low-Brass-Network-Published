@@ -46,7 +46,7 @@
         "IdentityPoolName": "testAuthIdentityPool__staging",
         "UserPoolName": "SocialMediaApp"
       },
-      "lastPushTimeStamp": "2022-11-23T18:37:32.842Z",
+      "lastPushTimeStamp": "2022-11-24T19:39:04.359Z",
       "providerMetadata": {
         "s3TemplateURL": "https://s3.amazonaws.com/amplify-socialmediaapp-staging-11043-deployment/amplify-cfn-templates/auth/SocialMediaApp-cloudformation-template.json",
         "logicalId": "authSocialMediaApp"
@@ -77,12 +77,12 @@
         "GraphQLAPIEndpointOutput": "https://uzg65om2zndhtnwfa4qwnrgc7a.appsync-api.us-west-1.amazonaws.com/graphql",
         "GraphQLAPIKeyOutput": "da2-zydyqxmcrnhojctvdnuijbaata"
       },
-      "lastPushTimeStamp": "2022-11-23T18:37:32.896Z",
+      "lastPushTimeStamp": "2022-11-24T19:39:04.409Z",
       "providerMetadata": {
         "s3TemplateURL": "https://s3.amazonaws.com/amplify-socialmediaapp-staging-11043-deployment/amplify-cfn-templates/api/cloudformation-template.json",
         "logicalId": "apiSocialMediaApp"
       },
-      "lastPushDirHash": "IcpGBzdOWKpLoqHxGHexq7VkjT0="
+      "lastPushDirHash": "CCfori8KgIAz85eu4h0u3i3rXac="
     }
   },
   "storage": {
@@ -94,7 +94,7 @@
         "BucketName": "socialmediaapp-storage-8135690111043-staging",
         "Region": "us-west-1"
       },
-      "lastPushTimeStamp": "2022-11-23T18:37:32.845Z",
+      "lastPushTimeStamp": "2022-11-24T19:39:04.362Z",
       "providerMetadata": {
         "s3TemplateURL": "https://s3.amazonaws.com/amplify-socialmediaapp-staging-11043-deployment/amplify-cfn-templates/storage/cloudformation-template.json",
         "logicalId": "storages3socialmediaappstorage81356901"

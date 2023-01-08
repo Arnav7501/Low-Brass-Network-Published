@@ -103,13 +103,43 @@ const Navigator = () => {
     </Stack.Navigator>
     )
   }
+
+  function TutorScreen() {
+    return (
+    <Stack.Navigator>
+    <Stack.Screen name="Find a Tutor/ Sign up" component={FeedScreen2} options={{headerShown: false}}/>
+    <Stack.Screen name="Sign up to be a Tutor" options = {{ headerBackTitle:"Back"}} component={CreatePostScreen2} />
+    </Stack.Navigator>)
+  }
+
+  function SocialMedia() {
+    return (
+    <Stack.Navigator options = {{headerShown: false}}>
+       <Stack.Screen name="Feed" component={FeedScreen}
+           options={({ navigation }) => ({
+            headerRight: () => (
+              <FontAwesome
+                onPress={() => navigation.navigate("Profile")}
+                name="user"
+                size={24}
+                color="gray"
+              />
+            ), headerShown: false
+          })}
+        />
+        <Stack.Screen name="Create Post"  component={CreatePostScreen} />
+    <Stack.Screen name="Profile" component={ProfileScreen} />
+    <Stack.Screen name = "Update Profile" component={UpdateProfileScreen} />
+    </Stack.Navigator>
+  )}
+
+
   return (
-    <NavigationContainer>
-     
+    <NavigationContainer> 
       {user ? (
           <Tab.Navigator>
           <>
-          <Tab.Screen name="Find a Tutor / Volunteer" component={FeedScreen2}   
+          <Tab.Screen name="Find a Tutor / Volunteer" component={TutorScreen}   
           options={{ headerShown: false,
            tabBarIcon: (tabInfo) => {
             return (
@@ -161,7 +191,7 @@ const Navigator = () => {
           },
           
           }}/>
-           <Tab.Screen name="LBN Media" component={FeedScreen}   
+           <Tab.Screen name="LBN Media" component={SocialMedia}   
           options={{ headerShown: false,
            tabBarIcon: (tabInfo) => {
             return (

@@ -2,7 +2,7 @@
   "expo": {
     "name": "Low Brass Network",
     "slug": "lbnapp_new",
-    "version": "7.0.0",
+    "version": "10.0.0",
     "orientation": "portrait",
     "icon": "./assets/lbnicon.png",
     "userInterfaceStyle": "light",

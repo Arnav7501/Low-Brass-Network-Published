@@ -1,91 +1,103 @@
 import { useEffect, useState } from "react";
-import { StatusBar } from "expo-status-bar";
-import { Button } from "react-native";
-import {
-  StyleSheet,
-  Text,
-  View,
-  SafeAreaView,
-  ScrollView,
-  Alert,
-} from "react-native";
-import { colors, CLEAR, ENTER, colorsToEmoji } from "./src/constants";
-import Keyboard from "./src/components/Keyboard";
-import * as Clipboard from "expo-clipboard";
-import { useNavigation} from "@react-navigation/native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Text, View, ScrollView, Alert, ActivityIndicator } from "react-native";
+import { colors, CLEAR, ENTER, colorsToEmoji } from "../../constants";
+import Keyboard from "../Keyboard";
+import words from "../../words";
+import styles from "./Game.styles";
+import { copyArray, getDayOfTheYear, getDayKey } from "../../utils";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import EndScreen from "../EndScreen";
+import Animated, {
+
+  SlideInLeft,
+  ZoomIn,
+  FlipInEasyY,
+} from "react-native-reanimated";
+
 const NUMBER_OF_TRIES = 6;
 
-const copyArray = (arr) => {
-  return [...arr.map((rows) => [...rows])];
-};
-
-const getDayOfTheYear = () => {
-  const now = new Date();
-  const start = new Date(now.getFullYear(), 0, 0);
-  const diff = now - start;
-  const oneDay = 1000 * 60 * 60 * 24;
-  const day = Math.floor(diff / oneDay);
-  return day;
-};
 const dayOfTheYear = getDayOfTheYear();
-const words = [
-  'quick', 'pipes', 'bells', 'drums', 'flats', 'brass', 'tubas', 'flute', 'viola', 'stops', 'bones', 'baris', 'altos', 'saxes', 'sight', 'reads', 'beats', 'agoge', 'alaap', 'alapa', 'anima', 'assai', 'basso', 'baton', 'brace', 'breve', 'buffo', 'burla', 'canon', 'carol', 'catch', 'chant', 'choir', 'music', 'chord', 'croon', 'dance', 'dirge', 'dolce', 'drone', 'etude', 'forte', 'fugue', 'fuoco', 'gamba', 'gamut', 'grave', 'gusto', 'large', 'largo', 'lento', 'lyric', 'major', 'march', 'bands', 'metre', 'mezzo', 'tuner', 'tunes', 'minim', 'minor', 'molto', 'mosso', 'motet', 'motif', 'neume', 'nonet', 'duets', 'octet', 'opera', 'ossia', 'pause', 'pedal', 'piano', 'pitch', 'pleno', 'plica', 'presa', 'primo', 'quint', 'rondo', 'round', 'scale', 'score', 'segno', 'segue', 'sgake', 'sharp', 'sixth', 'slide', 'solfa', 'staff', 'stave', 'strum', 'suite', 'swell', 'table', 'tacet', 'tempo', 'tenor', 'theme', 'third', 'tonic', 'touch', 'triad', 'trill', 'trope', 'tutti', 'upbow', 'valse', 'valve', 'voice', 'volta', 'yodel', 'clefs', 'hymns', 'modes', 'moods', 'mutes', 'reeds', 'rolls', 'rests', 'roots', 'slurs', 'solos', 'solis', 'songs', 'trios', 'tunes', 'turns', 'tones', 'times', 'cello', 'snare', 'xylos', 'oboes', 'harps', 'horns', 'banjo', 'lyres', 'stand', 'organ', 'sitar', 'veena', 'synth', 'halls', 'winds', 'string', 'smash', 'tabla', 'hihat', 'hangs', 'conga', 'chime', 'aulos', 'clave', 'crowd', 'cobza', 'bugle', 'bongo', 'daiko', 'crwth', 'dobro', 'gaita', 'gusla', 'gusle', 'quena', 'rebec', 'zanze', 'tabor', 'sarod', 'gongs', 'mouth', 'piece', 'screw', 'sings', 'grand', 'capos', 'secco', 'senzo', 'super', 'elegy', 'gigue', 'ondes', 'blues', 'waltz', 'books', 'arias',
-  'quick', 'pipes', 'bells', 'drums', 'flats', 'brass', 'tubas', 'flute', 'viola', 'stops', 'bones', 'baris', 'altos', 'saxes', 'sight', 'reads', 'beats', 'agoge', 'alaap', 'alapa', 'anima', 'assai', 'basso', 'baton', 'brace', 'breve', 'buffo', 'burla', 'canon', 'carol', 'catch', 'chant', 'choir', 'music', 'chord', 'croon', 'dance', 'dirge', 'dolce', 'drone', 'etude', 'forte', 'fugue', 'fuoco', 'gamba', 'gamut', 'grave', 'gusto', 'large', 'largo', 'lento', 'lyric', 'major', 'march', 'bands', 'metre', 'mezzo', 'tuner', 'tunes', 'minim', 'minor', 'molto', 'mosso', 'motet', 'motif', 'neume', 'nonet', 'duets', 'octet', 'opera', 'ossia', 'pause', 'pedal', 'piano', 'pitch', 'pleno', 'plica', 'presa', 'primo', 'quint', 'rondo', 'round', 'scale', 'score', 'segno', 'segue', 'sgake', 'sharp', 'sixth', 'slide', 'solfa', 'staff', 'stave', 'strum', 'suite', 'swell', 'table', 'tacet', 'tempo', 'tenor', 'theme', 'third', 'tonic', 'touch', 'triad', 'trill', 'trope', 'tutti', 'upbow', 'valse', 'valve', 'voice', 'volta', 'yodel', 'clefs', 'hymns', 'modes', 'moods', 'mutes', 'reeds', 'rolls', 'rests', 'roots', 'slurs', 'solos', 'solis', 'songs', 'trios', 'tunes', 'turns', 'tones', 'times', 'cello', 'snare', 'xylos', 'oboes', 'harps', 'horns', 'banjo', 'lyres', 'stand', 'organ', 'sitar', 'veena', 'synth', 'halls', 'winds', 'string', 'smash', 'tabla', 'hihat', 'hangs', 'conga', 'chime', 'aulos', 'clave', 'crowd', 'cobza', 'bugle', 'bongo', 'daiko', 'crwth', 'dobro', 'gaita', 'gusla', 'gusle', 'quena', 'rebec', 'zanze', 'tabor', 'sarod', 'gongs', 'mouth', 'piece', 'screw', 'sings', 'grand', 'capos', 'secco', 'senzo', 'super', 'elegy', 'gigue', 'ondes', 'blues', 'waltz', 'books', 'arias',
-  'quick', 'pipes', 'bells', 'drums', 'flats', 'brass', 'tubas', 'flute', 'viola', 'stops', 'bones', 'baris', 'altos', 'saxes', 'sight', 'reads', 'beats', 'agoge', 'alaap', 'alapa', 'anima', 'assai', 'basso', 'baton', 'brace', 'breve', 'buffo', 'burla', 'canon', 'carol', 'catch', 'chant', 'choir', 'music', 'chord', 'croon', 'dance', 'dirge', 'dolce', 'drone', 'etude', 'forte', 'fugue', 'fuoco', 'gamba', 'gamut', 'grave', 'gusto', 'large', 'largo', 'lento', 'lyric', 'major', 'march', 'bands', 'metre', 'mezzo', 'tuner', 'tunes', 'minim', 'minor', 'molto', 'mosso', 'motet', 'motif', 'neume', 'nonet', 'duets', 'octet', 'opera', 'ossia', 'pause', 'pedal', 'piano', 'pitch', 'pleno', 'plica', 'presa', 'primo', 'quint', 'rondo', 'round', 'scale', 'score', 'segno', 'segue', 'sgake', 'sharp', 'sixth', 'slide', 'solfa', 'staff', 'stave', 'strum', 'suite', 'swell', 'table', 'tacet', 'tempo', 'tenor', 'theme', 'third', 'tonic', 'touch', 'triad', 'trill', 'trope', 'tutti', 'upbow', 'valse', 'valve', 'voice', 'volta', 'yodel', 'clefs', 'hymns', 'modes', 'moods', 'mutes', 'reeds', 'rolls', 'rests', 'roots', 'slurs', 'solos', 'solis', 'songs', 'trios', 'tunes', 'turns', 'tones', 'times', 'cello', 'snare', 'xylos', 'oboes', 'harps', 'horns', 'banjo', 'lyres', 'stand', 'organ', 'sitar', 'veena', 'synth', 'halls', 'winds', 'string', 'smash', 'tabla', 'hihat', 'hangs', 'conga', 'chime', 'aulos', 'clave', 'crowd', 'cobza', 'bugle', 'bongo', 'daiko', 'crwth', 'dobro', 'gaita', 'gusla', 'gusle', 'quena', 'rebec', 'zanze', 'tabor', 'sarod', 'gongs', 'mouth', 'piece', 'screw', 'sings', 'grand', 'capos', 'secco', 'senzo', 'super', 'elegy', 'gigue', 'ondes', 'blues', 'waltz', 'books', 'arias',
-  'quick', 'pipes', 'bells', 'drums', 'flats', 'brass', 'tubas', 'flute', 'viola', 'stops', 'bones', 'baris', 'altos', 'saxes', 'sight', 'reads', 'beats', 'agoge', 'alaap', 'alapa', 'anima', 'assai', 'basso', 'baton', 'brace', 'breve', 'buffo', 'burla', 'canon', 'carol', 'catch', 'chant', 'choir', 'music', 'chord', 'croon', 'dance', 'dirge', 'dolce', 'drone', 'etude', 'forte', 'fugue', 'fuoco', 'gamba', 'gamut', 'grave', 'gusto', 'large', 'largo', 'lento', 'lyric', 'major', 'march', 'bands', 'metre', 'mezzo', 'tuner', 'tunes', 'minim', 'minor', 'molto', 'mosso', 'motet', 'motif', 'neume', 'nonet', 'duets', 'octet', 'opera', 'ossia', 'pause', 'pedal', 'piano', 'pitch', 'pleno', 'plica', 'presa', 'primo', 'quint', 'rondo', 'round', 'scale', 'score', 'segno', 'segue', 'sgake', 'sharp', 'sixth', 'slide', 'solfa', 'staff', 'stave', 'strum', 'suite', 'swell', 'table', 'tacet', 'tempo', 'tenor', 'theme', 'third', 'tonic', 'touch', 'triad', 'trill', 'trope', 'tutti', 'upbow', 'valse', 'valve', 'voice', 'volta', 'yodel', 'clefs', 'hymns', 'modes', 'moods', 'mutes', 'reeds', 'rolls', 'rests', 'roots', 'slurs', 'solos', 'solis', 'songs', 'trios', 'tunes', 'turns', 'tones', 'times', 'cello', 'snare', 'xylos', 'oboes', 'harps', 'horns', 'banjo', 'lyres', 'stand', 'organ', 'sitar', 'veena', 'synth', 'halls', 'winds', 'string', 'smash', 'tabla', 'hihat', 'hangs', 'conga', 'chime', 'aulos', 'clave', 'crowd', 'cobza', 'bugle', 'bongo', 'daiko', 'crwth', 'dobro', 'gaita', 'gusla', 'gusle', 'quena', 'rebec', 'zanze', 'tabor', 'sarod', 'gongs', 'mouth', 'piece', 'screw', 'sings', 'grand', 'capos', 'secco', 'senzo', 'super', 'elegy', 'gigue', 'ondes', 'blues', 'waltz', 'books', 'arias',
-  'quick', 'pipes', 'bells', 'drums', 'flats', 'brass', 'tubas', 'flute', 'viola', 'stops', 'bones', 'baris', 'altos', 'saxes', 'sight', 'reads', 'beats', 'agoge', 'alaap', 'alapa', 'anima', 'assai', 'basso', 'baton', 'brace', 'breve', 'buffo', 'burla', 'canon', 'carol', 'catch', 'chant', 'choir', 'music', 'chord', 'croon', 'dance', 'dirge', 'dolce', 'drone', 'etude', 'forte', 'fugue', 'fuoco', 'gamba', 'gamut', 'grave', 'gusto', 'large', 'largo', 'lento', 'lyric', 'major', 'march', 'bands', 'metre', 'mezzo', 'tuner', 'tunes', 'minim', 'minor', 'molto', 'mosso', 'motet', 'motif', 'neume', 'nonet', 'duets', 'octet', 'opera', 'ossia', 'pause', 'pedal', 'piano', 'pitch', 'pleno', 'plica', 'presa', 'primo', 'quint', 'rondo', 'round', 'scale', 'score', 'segno', 'segue', 'sgake', 'sharp', 'sixth', 'slide', 'solfa', 'staff', 'stave', 'strum', 'suite', 'swell', 'table', 'tacet', 'tempo', 'tenor', 'theme', 'third', 'tonic', 'touch', 'triad', 'trill', 'trope', 'tutti', 'upbow', 'valse', 'valve', 'voice', 'volta', 'yodel', 'clefs', 'hymns', 'modes', 'moods', 'mutes', 'reeds', 'rolls', 'rests', 'roots', 'slurs', 'solos', 'solis', 'songs', 'trios', 'tunes', 'turns', 'tones', 'times', 'cello', 'snare', 'xylos', 'oboes', 'harps', 'horns', 'banjo', 'lyres', 'stand', 'organ', 'sitar', 'veena', 'synth', 'halls', 'winds', 'string', 'smash', 'tabla', 'hihat', 'hangs', 'conga', 'chime', 'aulos', 'clave', 'crowd', 'cobza', 'bugle', 'bongo', 'daiko', 'crwth', 'dobro', 'gaita', 'gusla', 'gusle', 'quena', 'rebec', 'zanze', 'tabor', 'sarod', 'gongs', 'mouth', 'piece', 'screw', 'sings', 'grand', 'capos', 'secco', 'senzo', 'super', 'elegy', 'gigue', 'ondes', 'blues', 'waltz', 'books', 'arias',
-  'quick', 'pipes', 'bells', 'drums', 'flats', 'brass', 'tubas', 'flute', 'viola', 'stops', 'bones', 'baris', 'altos', 'saxes', 'sight', 'reads', 'beats', 'agoge', 'alaap', 'alapa', 'anima', 'assai', 'basso', 'baton', 'brace', 'breve', 'buffo', 'burla', 'canon', 'carol', 'catch', 'chant', 'choir', 'music', 'chord', 'croon', 'dance', 'dirge', 'dolce', 'drone', 'etude', 'forte', 'fugue', 'fuoco', 'gamba', 'gamut', 'grave', 'gusto', 'large', 'largo', 'lento', 'lyric', 'major', 'march', 'bands', 'metre', 'mezzo', 'tuner', 'tunes', 'minim', 'minor', 'molto', 'mosso', 'motet', 'motif', 'neume', 'nonet', 'duets', 'octet', 'opera', 'ossia', 'pause', 'pedal', 'piano', 'pitch', 'pleno', 'plica', 'presa', 'primo', 'quint', 'rondo', 'round', 'scale', 'score', 'segno', 'segue', 'sgake', 'sharp', 'sixth', 'slide', 'solfa', 'staff', 'stave', 'strum', 'suite', 'swell', 'table', 'tacet', 'tempo', 'tenor', 'theme', 'third', 'tonic', 'touch', 'triad', 'trill', 'trope', 'tutti', 'upbow', 'valse', 'valve', 'voice', 'volta', 'yodel', 'clefs', 'hymns', 'modes', 'moods', 'mutes', 'reeds', 'rolls', 'rests', 'roots', 'slurs', 'solos', 'solis', 'songs', 'trios', 'tunes', 'turns', 'tones', 'times', 'cello', 'snare', 'xylos', 'oboes', 'harps', 'horns', 'banjo', 'lyres', 'stand', 'organ', 'sitar', 'veena', 'synth', 'halls', 'winds', 'string', 'smash', 'tabla', 'hihat', 'hangs', 'conga', 'chime', 'aulos', 'clave', 'crowd', 'cobza', 'bugle', 'bongo', 'daiko', 'crwth', 'dobro', 'gaita', 'gusla', 'gusle', 'quena', 'rebec', 'zanze', 'tabor', 'sarod', 'gongs', 'mouth', 'piece', 'screw', 'sings', 'grand', 'capos', 'secco', 'senzo', 'super', 'elegy', 'gigue', 'ondes', 'blues', 'waltz', 'books', 'arias',
-  'quick', 'pipes', 'bells', 'drums', 'flats', 'brass', 'tubas', 'flute', 'viola', 'stops', 'bones', 'baris', 'altos', 'saxes', 'sight', 'reads', 'beats', 'agoge', 'alaap', 'alapa', 'anima', 'assai', 'basso', 'baton', 'brace', 'breve', 'buffo', 'burla', 'canon', 'carol', 'catch', 'chant', 'choir', 'music', 'chord', 'croon', 'dance', 'dirge', 'dolce', 'drone', 'etude', 'forte', 'fugue', 'fuoco', 'gamba', 'gamut', 'grave', 'gusto', 'large', 'largo', 'lento', 'lyric', 'major', 'march', 'bands', 'metre', 'mezzo', 'tuner', 'tunes', 'minim', 'minor', 'molto', 'mosso', 'motet', 'motif', 'neume', 'nonet', 'duets', 'octet', 'opera', 'ossia', 'pause', 'pedal', 'piano', 'pitch', 'pleno', 'plica', 'presa', 'primo', 'quint', 'rondo', 'round', 'scale', 'score', 'segno', 'segue', 'sgake', 'sharp', 'sixth', 'slide', 'solfa', 'staff', 'stave', 'strum', 'suite', 'swell', 'table', 'tacet', 'tempo', 'tenor', 'theme', 'third', 'tonic', 'touch', 'triad', 'trill', 'trope', 'tutti', 'upbow', 'valse', 'valve', 'voice', 'volta', 'yodel', 'clefs', 'hymns', 'modes', 'moods', 'mutes', 'reeds', 'rolls', 'rests', 'roots', 'slurs', 'solos', 'solis', 'songs', 'trios', 'tunes', 'turns', 'tones', 'times', 'cello', 'snare', 'xylos', 'oboes', 'harps', 'horns', 'banjo', 'lyres', 'stand', 'organ', 'sitar', 'veena', 'synth', 'halls', 'winds', 'string', 'smash', 'tabla', 'hihat', 'hangs', 'conga', 'chime', 'aulos', 'clave', 'crowd', 'cobza', 'bugle', 'bongo', 'daiko', 'crwth', 'dobro', 'gaita', 'gusla', 'gusle', 'quena', 'rebec', 'zanze', 'tabor', 'sarod', 'gongs', 'mouth', 'piece', 'screw', 'sings', 'grand', 'capos', 'secco', 'senzo', 'super', 'elegy', 'gigue', 'ondes', 'blues', 'waltz', 'books', 'arias',
-  'quick', 'pipes', 'bells', 'drums', 'flats', 'brass', 'tubas', 'flute', 'viola', 'stops', 'bones', 'baris', 'altos', 'saxes', 'sight', 'reads', 'beats', 'agoge', 'alaap', 'alapa', 'anima', 'assai', 'basso', 'baton', 'brace', 'breve', 'buffo', 'burla', 'canon', 'carol', 'catch', 'chant', 'choir', 'music', 'chord', 'croon', 'dance', 'dirge', 'dolce', 'drone', 'etude', 'forte', 'fugue', 'fuoco', 'gamba', 'gamut', 'grave', 'gusto', 'large', 'largo', 'lento', 'lyric', 'major', 'march', 'bands', 'metre', 'mezzo', 'tuner', 'tunes', 'minim', 'minor', 'molto', 'mosso', 'motet', 'motif', 'neume', 'nonet', 'duets', 'octet', 'opera', 'ossia', 'pause', 'pedal', 'piano', 'pitch', 'pleno', 'plica', 'presa', 'primo', 'quint', 'rondo', 'round', 'scale', 'score', 'segno', 'segue', 'sgake', 'sharp', 'sixth', 'slide', 'solfa', 'staff', 'stave', 'strum', 'suite', 'swell', 'table', 'tacet', 'tempo', 'tenor', 'theme', 'third', 'tonic', 'touch', 'triad', 'trill', 'trope', 'tutti', 'upbow', 'valse', 'valve', 'voice', 'volta', 'yodel', 'clefs', 'hymns', 'modes', 'moods', 'mutes', 'reeds', 'rolls', 'rests', 'roots', 'slurs', 'solos', 'solis', 'songs', 'trios', 'tunes', 'turns', 'tones', 'times', 'cello', 'snare', 'xylos', 'oboes', 'harps', 'horns', 'banjo', 'lyres', 'stand', 'organ', 'sitar', 'veena', 'synth', 'halls', 'winds', 'string', 'smash', 'tabla', 'hihat', 'hangs', 'conga', 'chime', 'aulos', 'clave', 'crowd', 'cobza', 'bugle', 'bongo', 'daiko', 'crwth', 'dobro', 'gaita', 'gusla', 'gusle', 'quena', 'rebec', 'zanze', 'tabor', 'sarod', 'gongs', 'mouth', 'piece', 'screw', 'sings', 'grand', 'capos', 'secco', 'senzo', 'super', 'elegy', 'gigue', 'ondes', 'blues', 'waltz', 'books', 'arias',
-  'quick', 'pipes', 'bells', 'drums', 'flats', 'brass', 'tubas', 'flute', 'viola', 'stops', 'bones', 'baris', 'altos', 'saxes', 'sight', 'reads', 'beats', 'agoge', 'alaap', 'alapa', 'anima', 'assai', 'basso', 'baton', 'brace', 'breve', 'buffo', 'burla', 'canon', 'carol', 'catch', 'chant', 'choir', 'music', 'chord', 'croon', 'dance', 'dirge', 'dolce', 'drone', 'etude', 'forte', 'fugue', 'fuoco', 'gamba', 'gamut', 'grave', 'gusto', 'large', 'largo', 'lento', 'lyric', 'major', 'march', 'bands', 'metre', 'mezzo', 'tuner', 'tunes', 'minim', 'minor', 'molto', 'mosso', 'motet', 'motif', 'neume', 'nonet', 'duets', 'octet', 'opera', 'ossia', 'pause', 'pedal', 'piano', 'pitch', 'pleno', 'plica', 'presa', 'primo', 'quint', 'rondo', 'round', 'scale', 'score', 'segno', 'segue', 'sgake', 'sharp', 'sixth', 'slide', 'solfa', 'staff', 'stave', 'strum', 'suite', 'swell', 'table', 'tacet', 'tempo', 'tenor', 'theme', 'third', 'tonic', 'touch', 'triad', 'trill', 'trope', 'tutti', 'upbow', 'valse', 'valve', 'voice', 'volta', 'yodel', 'clefs', 'hymns', 'modes', 'moods', 'mutes', 'reeds', 'rolls', 'rests', 'roots', 'slurs', 'solos', 'solis', 'songs', 'trios', 'tunes', 'turns', 'tones', 'times', 'cello', 'snare', 'xylos', 'oboes', 'harps', 'horns', 'banjo', 'lyres', 'stand', 'organ', 'sitar', 'veena', 'synth', 'halls', 'winds', 'string', 'smash', 'tabla', 'hihat', 'hangs', 'conga', 'chime', 'aulos', 'clave', 'crowd', 'cobza', 'bugle', 'bongo', 'daiko', 'crwth', 'dobro', 'gaita', 'gusla', 'gusle', 'quena', 'rebec', 'zanze', 'tabor', 'sarod', 'gongs', 'mouth', 'piece', 'screw', 'sings', 'grand', 'capos', 'secco', 'senzo', 'super', 'elegy', 'gigue', 'ondes', 'blues', 'waltz', 'books', 'arias',
-  'quick', 'pipes', 'bells', 'drums', 'flats', 'brass', 'tubas', 'flute', 'viola', 'stops', 'bones', 'baris', 'altos', 'saxes', 'sight', 'reads', 'beats', 'agoge', 'alaap', 'alapa', 'anima', 'assai', 'basso', 'baton', 'brace', 'breve', 'buffo', 'burla', 'canon', 'carol', 'catch', 'chant', 'choir', 'music', 'chord', 'croon', 'dance', 'dirge', 'dolce', 'drone', 'etude', 'forte', 'fugue', 'fuoco', 'gamba', 'gamut', 'grave', 'gusto', 'large', 'largo', 'lento', 'lyric', 'major', 'march', 'bands', 'metre', 'mezzo', 'tuner', 'tunes', 'minim', 'minor', 'molto', 'mosso', 'motet', 'motif', 'neume', 'nonet', 'duets', 'octet', 'opera', 'ossia', 'pause', 'pedal', 'piano', 'pitch', 'pleno', 'plica', 'presa', 'primo', 'quint', 'rondo', 'round', 'scale', 'score', 'segno', 'segue', 'sgake', 'sharp', 'sixth', 'slide', 'solfa', 'staff', 'stave', 'strum', 'suite', 'swell', 'table', 'tacet', 'tempo', 'tenor', 'theme', 'third', 'tonic', 'touch', 'triad', 'trill', 'trope', 'tutti', 'upbow', 'valse', 'valve', 'voice', 'volta', 'yodel', 'clefs', 'hymns', 'modes', 'moods', 'mutes', 'reeds', 'rolls', 'rests', 'roots', 'slurs', 'solos', 'solis', 'songs', 'trios', 'tunes', 'turns', 'tones', 'times', 'cello', 'snare', 'xylos', 'oboes', 'harps', 'horns', 'banjo', 'lyres', 'stand', 'organ', 'sitar', 'veena', 'synth', 'halls', 'winds', 'string', 'smash', 'tabla', 'hihat', 'hangs', 'conga', 'chime', 'aulos', 'clave', 'crowd', 'cobza', 'bugle', 'bongo', 'daiko', 'crwth', 'dobro', 'gaita', 'gusla', 'gusle', 'quena', 'rebec', 'zanze', 'tabor', 'sarod', 'gongs', 'mouth', 'piece', 'screw', 'sings', 'grand', 'capos', 'secco', 'senzo', 'super', 'elegy', 'gigue', 'ondes', 'blues', 'waltz', 'books', 'arias',
+const dayKey = getDayKey();
 
-];
-
-export default function WordleScreen() {
-  const navigation = useNavigation()
-  const [counter, setCounter] = useState(0);
+const Game = () => {
+  // AsyncStorage.removeItem("@game");
   const word = words[dayOfTheYear];
-  const letters = word.split(""); // ['h', 'e', 'l', 'l', 'o']
-
+  const letters = word.split(""); 
+  console.log(letters)
+  const [loaded, setLoaded] = useState("false");
   const [rows, setRows] = useState(
-    new Array(NUMBER_OF_TRIES).fill(new Array(letters.length).fill(""))
+   new Array(NUMBER_OF_TRIES).fill(new Array(letters.length).fill(""))
   );
+
+  const [refresh, setRefresh] = useState(0);
   const [curRow, setCurRow] = useState(0);
   const [curCol, setCurCol] = useState(0);
   const [gameState, setGameState] = useState("playing"); // won, lost, playing
+  
+
 
   useEffect(() => {
+
     if (curRow > 0) {
       checkGameState();
     }
   }, [curRow]);
 
-  
-  const checkGameState = () => {
-    if (checkIfWon() && gameState !== "won") {
-      Alert.alert("Huraaay", "You won!", [
-        { text: "Share", onPress: shareScore()},
-      ]);
-      console.log("won2")
-      setGameState("won");
-    } else if (checkIfLost() && gameState !== "lost") {
-      Alert.alert("WRONG", "Try again tomorrow! The word was " + word);
-      setGameState("lost");
+  useEffect(() => {
+    if (loaded) {
+      persistState();
+    }
+  }, [rows, curRow, curCol, gameState]);
+
+  useEffect(() => {
+    readState();
+  }, []);
+
+  const persistState = async () => {
+    const dataForToday = {
+      rows,
+      curRow,
+      curCol,
+      gameState,
+    };
+
+    try {
+      const existingStateString = await AsyncStorage.getItem("@game");
+      const existingState = existingStateString
+        ? JSON.parse(existingStateString)
+        : {};
+
+      existingState[dayKey] = dataForToday;
+
+      const dataString = JSON.stringify(existingState);
+      await AsyncStorage.setItem("@game", dataString);
+    } catch (e) {
+      console.log("Failed to write data to async storage", e);
     }
   };
 
-  const shareScore = () => {
-    const textMap = rows
-      .map((row, i) =>
-        row.map((cell, j) => colorsToEmoji[getCellBGColor(i, j)]).join("")
-      )
-      .filter((row) => row)
-      .join("\n");
-    const textToShare = `Wordle \n${textMap}`;
-    Clipboard.setStringAsync(textToShare);
-    Alert.alert("Copied successfully", "Share your score on your social media");
+  const readState = async () => {
+    const dataString = await AsyncStorage.getItem("@game");
+    try {
+      const data = JSON.parse(dataString);
+      const day = data[dayKey];
+      setRows(day.rows);
+      setCurCol(day.curCol);
+      setCurRow(day.curRow);
+      setGameState(day.gameState);
+    } catch (e) {
+      console.log("Couldn't parse the sate");
+    }
+
+   setLoaded("true")
+  };
+
+  const checkGameState = () => {
+    if (checkIfWon() && gameState !== "won") {
+      setGameState("won");
+    } else if (checkIfLost() && gameState !== "lost") {
+      setGameState("lost");
+    }
   };
 
   const checkIfWon = () => {
@@ -160,34 +172,66 @@ export default function WordleScreen() {
   const yellowCaps = getAllLettersWithColor(colors.secondary);
   const greyCaps = getAllLettersWithColor(colors.darkgrey);
 
+  const getCellStyle = (i, j) => [
+    styles.cell,
+    {
+      borderColor: isCellActive(i, j) ? colors.grey : colors.darkgrey,
+      backgroundColor: getCellBGColor(i, j),
+    },
+  ];
+
+  if (!loaded) {
+    return <ActivityIndicator />;
+  }
+
+  if (gameState !== "playing") {
+    return (
+      <EndScreen
+        won={gameState === "won"}
+        rows={rows}
+        getCellBGColor={getCellBGColor}
+      />
+    );
+  }
+
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
-    
-
-      
-      <Text style={styles.title}>Music Wordle</Text>
-
+    <>
+ 
       <ScrollView style={styles.map}>
         {rows.map((row, i) => (
-          <View key={`row-${i}`} style={styles.row}>
+          <Animated.View
+            entering={SlideInLeft}
+            key={`row-${i}`}
+            style={styles.row}
+          >
             {row.map((letter, j) => (
-              <View
-                key={`cell-${i}-${j}`}
-                style={[
-                  styles.cell,
-                  {
-                    borderColor: isCellActive(i, j)
-                      ? colors.grey
-                      : colors.darkgrey,
-                    backgroundColor: getCellBGColor(i, j),
-                  },
-                ]}
-              >
-                <Text style={styles.cellText}>{letter.toUpperCase()}</Text>
-              </View>
+              <>
+                {i < curRow && (
+                  <Animated.View
+                    entering={FlipInEasyY.delay(j * 100)}
+                    key={`cell-color-${i}-${j}`}
+                    style={getCellStyle(i, j)}
+                  >
+                    <Text style={styles.cellText}>{letter.toUpperCase()}</Text>
+                  </Animated.View>
+                )}
+                {i === curRow && !!letter && (
+                  <Animated.View
+                    entering={ZoomIn}
+                    key={`cell-active-${i}-${j}`}
+                    style={getCellStyle(i, j)}
+                  >
+                    <Text style={styles.cellText}>{letter.toUpperCase()}</Text>
+                  </Animated.View>
+                )}
+                {!letter && (
+                  <View key={`cell-${i}-${j}`} style={getCellStyle(i, j)}>
+                    <Text style={styles.cellText}>{letter.toUpperCase()}</Text>
+                  </View>
+                )}
+              </>
             ))}
-          </View>
+          </Animated.View>
         ))}
       </ScrollView>
 
@@ -197,45 +241,8 @@ export default function WordleScreen() {
         yellowCaps={yellowCaps}
         greyCaps={greyCaps}
       />
-    </SafeAreaView>
+    </>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.black,
-    alignItems: "center",
-  },
-  title: {
-    color: colors.lightgrey,
-    fontSize: 32,
-    fontWeight: "bold",
-    letterSpacing: 7,
-  },
-
-  map: {
-    alignSelf: "stretch",
-    marginVertical: 20,
-  },
-  row: {
-    alignSelf: "stretch",
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  cell: {
-    borderWidth: 3,
-    borderColor: colors.darkgrey,
-    flex: 1,
-    maxWidth: 70,
-    aspectRatio: 1,
-    margin: 3,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  cellText: {
-    color: colors.lightgrey,
-    fontWeight: "bold",
-    fontSize: 28,
-  },
-});
+export default Game;

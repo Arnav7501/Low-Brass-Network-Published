@@ -177,6 +177,11 @@
             "Required": true
           }
         ],
+        "UserAttributeUpdateSettings": {
+          "AttributesRequireVerificationBeforeUpdate": [
+            "email"
+          ]
+        },
         "UsernameConfiguration": {
           "CaseSensitive": false
         },

@@ -15,6 +15,9 @@
       "auth": {
         "FBTest": {},
         "SocialMediaApp": {}
+      },
+      "storage": {
+        "s3socialmediaappstorage81356901": {}
       }
     }
   }
